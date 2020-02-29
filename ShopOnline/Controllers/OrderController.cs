@@ -22,9 +22,10 @@ namespace ShopOnline.Controllers
         }
 
         // GET: Order
-        public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 20)
+        public async Task<IActionResult> Index(uint pageIndex = 1, uint pageSize = 20)
         {
             List<Order> orderList = await _orderRepository.FindAsync(pageIndex, pageSize);
+
             int totalCount = await _orderRepository.CountAsync();
             return View(new PaginatedList<Order>(orderList, totalCount, pageIndex, pageSize));
         }

@@ -12,7 +12,7 @@ namespace ShopOnline.Repository
 
         Task<TEntity> FindAsync(long id);
 
-        Task<List<TEntity>> FindAsync(int pageIndex, int pageSize);
+        Task<List<TEntity>> FindAsync(uint pageIndex, uint pageSize);
 
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression);
 

@@ -28,14 +28,14 @@ namespace ShopOnline.Repository
             return _context.Order.Include(x => x.Product).SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<List<Order>> FindAsync(int pageIndex, int pageSize)
+        public Task<List<Order>> FindAsync(uint pageIndex, uint pageSize)
         {
             if (pageIndex < 1 || pageSize == 0)
             {
-                return null;
+                return Task.Run(() => new List<Order>());
             }
 
-            return _context.Order.Include(x => x.Product).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            return _context.Order.Include(x => x.Product).Skip((int)((pageIndex - 1) * pageSize)).Take((int)pageSize).ToListAsync();
         }
 
         public Task<List<Order>> FindAsync(Expression<Func<Order, bool>> expression)

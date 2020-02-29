@@ -28,14 +28,14 @@ namespace ShopOnline.Repository
             return _context.Product.SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<List<Product>> FindAsync(int pageIndex, int pageSize)
+        public Task<List<Product>> FindAsync(uint pageIndex, uint pageSize)
         {
             if (pageIndex < 1 || pageSize <= 0)
             {
-                return null;
+                return Task.Run(() => new List<Order>());
             }
 
-            return _context.Product.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            return _context.Product.Skip((int) ((pageIndex - 1) * pageSize)).Take((int) pageSize).ToListAsync();
         }
 
         public Task<List<Product>> FindAsync(Expression<Func<Product, bool>> expression)
