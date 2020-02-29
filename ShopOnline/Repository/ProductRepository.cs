@@ -32,7 +32,7 @@ namespace ShopOnline.Repository
         {
             if (pageIndex < 1 || pageSize <= 0)
             {
-                return Task.Run(() => new List<Order>());
+                return Task.Run(() => new List<Product>());
             }
 
             return _context.Product.Skip((int) ((pageIndex - 1) * pageSize)).Take((int) pageSize).ToListAsync();
