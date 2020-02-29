@@ -1,0 +1,81 @@
+﻿@using ExtensionLibrary
+@model PaginatedList<ShopOnline.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Order List</h1>
+
+<form asp-action="Edit">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    To Be Shipped
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Price
+                </th>
+                <th>
+                    Cost
+                </th>
+                <th>
+                    Status
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (@item.Status == OrderStatus.ToBeShipped)
+                        {
+                            @Html.CheckBox("statusShipped", true, new { value = @item.Id, disabled = "disabled" })
+                        }
+                        else
+                        {
+                            @Html.CheckBox("statusPaid", false, new { value = @item.Id })
+                        }
+                    </td>
+                    <td>
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId">@Html.DisplayFor(modelItem => item.Product.Name)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product.Cost)
+                    </td>
+                    <td>
+                        @item.GetOrderStatus()
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit">Confirm</button>
+
+</form><br/>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageIndex="@(Model.PageIndex - 1)"
+   class="btn btn-primary @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-pageIndex="@(Model.PageIndex + 1)"
+   class="btn btn-primary @nextDisabled">
+    Next
+</a>
