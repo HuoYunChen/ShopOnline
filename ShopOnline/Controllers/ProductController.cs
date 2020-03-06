@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ShopOnline.Data;
+using ShopOnline.Libraries;
 using ShopOnline.Models;
 using ShopOnline.Repository;
 
@@ -13,14 +14,13 @@ namespace ShopOnline.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IRepository<Product> _productRepository;
+        private readonly IProductLibrary _productLibrary;
 
-        public ProductController(IRepository<Product> productRepository)
+        public ProductController(IProductLibrary productLibrary)
         {
-            _productRepository = productRepository;
+            _productLibrary = productLibrary;
         }
 
-        // GET: Product/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -28,7 +28,7 @@ namespace ShopOnline.Controllers
                 return NotFound();
             }
 
-            var product = await _productRepository.FindAsync((long)id);
+            var product = await _productLibrary.Get((long)id);
             if (product == null)
             {
                 return NotFound();

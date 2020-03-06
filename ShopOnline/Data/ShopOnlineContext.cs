@@ -17,5 +17,7 @@ namespace ShopOnline.Data
         public DbSet<Product> Product { get; set; }
 
         public DbSet<Order> Order { get; set; }
+
+        public DbSet<Shipping> Shipping { get; set; }
     }
 }

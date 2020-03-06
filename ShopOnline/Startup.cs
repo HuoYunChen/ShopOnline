@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ShopOnline.Data;
+using ShopOnline.Libraries;
 using ShopOnline.Models;
 using ShopOnline.Repository;
 
@@ -32,6 +34,10 @@ namespace ShopOnline
                     options.UseSqlServer(Configuration.GetConnectionString("ShopOnlineContext")));
             services.AddScoped<IRepository<Product>, ProductRepository>();
             services.AddScoped<IRepository<Order>, OrderRepository>();
+            services.AddScoped<IRepository<Shipping>, ShippingRepository>();
+            services.AddScoped<IOrderLibrary, OrderLibrary>();
+            services.AddScoped<IProductLibrary, ProductLibrary>();
+            services.AddScoped<IShippingLibrary, ShippingLibrary>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

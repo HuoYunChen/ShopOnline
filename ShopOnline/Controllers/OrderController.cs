@@ -4,35 +4,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExtensionLibrary;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ShopOnline.Data;
+using Microsoft.Extensions.Logging;
+using ShopOnline.Libraries;
+using ShopOnline.Logger;
 using ShopOnline.Models;
-using ShopOnline.Repository;
 
 namespace ShopOnline.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly IRepository<Order> _orderRepository;
+        private readonly ILogger<OrderController> _logger;
+        private readonly IOrderLibrary _OrderLibrary;
 
-        public OrderController(IRepository<Order> orderRepository)
+        public OrderController(ILogger<OrderController> logger, IOrderLibrary orderLibrary)
         {
-            _orderRepository = orderRepository;
+            _logger = logger;
+            _OrderLibrary = orderLibrary;
         }
 
-        // GET: Order
         public async Task<IActionResult> Index(uint pageIndex = 1, uint pageSize = 20)
         {
-            List<Order> orderList = await _orderRepository.FindAsync(pageIndex, pageSize);
-
-            int totalCount = await _orderRepository.CountAsync();
-            return View(new PaginatedList<Order>(orderList, totalCount, pageIndex, pageSize));
+            PaginatedList<Order> orderList = await _OrderLibrary.GetListAsync(pageIndex, pageSize);
+            return View(orderList);
         }
 
-        // POST: Order/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(List<long> statusPaid)
@@ -42,15 +37,10 @@ namespace ShopOnline.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            List<Order> orderList = await _orderRepository.FindAsync(x => statusPaid.Contains(x.Id));
-            if (orderList != null && orderList.Count > 0)
-            {
-                foreach (Order order in orderList)
-                {
-                    order.Status = OrderStatus.ToBeShipped;
-                }
-                await _orderRepository.UpdateAsync(orderList);
-            }
+            await _OrderLibrary.StatusChangeAsync(OrderStatus.ToBeShipped, statusPaid);
+
+            var logger = new ControllerLogger<List<long>>(this.ControllerContext, statusPaid);
+            _logger.LogTrace(logger.GetMessage());
 
             return RedirectToAction(nameof(Index));
         }

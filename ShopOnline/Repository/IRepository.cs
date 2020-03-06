@@ -8,6 +8,8 @@ namespace ShopOnline.Repository
 {
     public interface IRepository<TEntity>
     {
+        Task CreateAsync(IEnumerable<TEntity> entities);
+
         Task UpdateAsync(IEnumerable<TEntity> entities);
 
         Task<TEntity> FindAsync(long id);

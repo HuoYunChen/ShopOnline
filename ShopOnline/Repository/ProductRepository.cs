@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace ShopOnline.Repository
 {
@@ -18,29 +19,52 @@ namespace ShopOnline.Repository
             _context = context;
         }
 
-        public Task<int> CountAsync()
+        public async Task<int> CountAsync()
         {
-            return _context.Product.CountAsync();
+            using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
+            {
+                return await _context.Product.CountAsync();
+            }
         }
 
-        public Task<Product> FindAsync(long id)
+        public async Task CreateAsync(IEnumerable<Product> entities)
         {
-            return _context.Product.SingleOrDefaultAsync(x => x.Id == id);
+            if (entities == null || entities.Count() == 0)
+            {
+                return;
+            }
+
+            _context.Product.AddRange(entities);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<List<Product>> FindAsync(uint pageIndex, uint pageSize)
+        public async Task<Product> FindAsync(long id)
+        {
+            using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
+            {
+                return await _context.Product.SingleOrDefaultAsync(x => x.Id == id);
+            } 
+        }
+
+        public async Task<List<Product>> FindAsync(uint pageIndex, uint pageSize)
         {
             if (pageIndex < 1 || pageSize <= 0)
             {
-                return Task.Run(() => new List<Product>());
+                return new List<Product>();
             }
 
-            return _context.Product.Skip((int) ((pageIndex - 1) * pageSize)).Take((int) pageSize).ToListAsync();
+            using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
+            {
+                return await _context.Product.Skip((int)((pageIndex - 1) * pageSize)).Take((int)pageSize).ToListAsync();
+            } 
         }
 
-        public Task<List<Product>> FindAsync(Expression<Func<Product, bool>> expression)
+        public async Task<List<Product>> FindAsync(Expression<Func<Product, bool>> expression)
         {
-            return _context.Product.Where(expression).ToListAsync();
+            using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
+            {
+                return await _context.Product.AsNoTracking().Where(expression).ToListAsync();
+            } 
         }
 
         public async Task UpdateAsync(IEnumerable<Product> entities)
