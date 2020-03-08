@@ -32,7 +32,6 @@ namespace ShopOnline.Libraries
                     Price = order.Product.Price,
                     Order = order
                 });
-                order.Product = null;
             }
 
             return _shippingrderRepository.UpdateAsync(shippingList);

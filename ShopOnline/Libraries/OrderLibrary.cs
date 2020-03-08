@@ -37,16 +37,6 @@ namespace ShopOnline.Libraries
             }
         }
 
-        private async Task UpdateStatus(OrderStatus newStatus, IEnumerable<Order> orders)
-        {
-            foreach (Order order in orders)
-            {
-                order.Status = OrderStatus.ToBeShipped;
-            }
-
-            await _orderRepository.UpdateAsync(orders);
-        }
-
         public async Task<PaginatedList<Order>> GetListAsync (uint pageIndex = 1, uint pageSize = 20)
         {
             List<Order> orderList = await _orderRepository.FindAsync(pageIndex, pageSize);
