@@ -23,7 +23,7 @@ namespace ShopOnline.Repository
         {
             using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
             {
-                return await _context.Product.CountAsync();
+                return await _context.Product.AsNoTracking().CountAsync();
             }
         }
 
@@ -42,7 +42,7 @@ namespace ShopOnline.Repository
         {
             using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
             {
-                return await _context.Product.SingleOrDefaultAsync(x => x.Id == id);
+                return await _context.Product.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
             } 
         }
 
@@ -55,7 +55,7 @@ namespace ShopOnline.Repository
 
             using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
             {
-                return await _context.Product.Skip((int)((pageIndex - 1) * pageSize)).Take((int)pageSize).ToListAsync();
+                return await _context.Product.AsNoTracking().Skip((int)((pageIndex - 1) * pageSize)).Take((int)pageSize).ToListAsync();
             } 
         }
 

@@ -24,7 +24,7 @@ namespace ShopOnline.Repository
         {
             using (TransactionScope ts = Repository.GetNewReadUncommittedScope())
             {
-                return _context.Order.CountAsync();
+                return _context.Order.AsNoTracking().CountAsync();
             }
         }
 
